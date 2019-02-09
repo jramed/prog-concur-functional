@@ -9,6 +9,11 @@ object Main {
   // se debe pedir si es demo, los dos jugadores son automaticos o son humanos
   //utilizar traits para hacerlo
   def main(args: Array[String]): Unit = {
+    val gameMode = GameView.obtainGameMode()
+//    gameMode match {
+//      case mode if mode == GameMode.Demo =>
+//      case _ =>
+//    }
     GameView.write(game)
     //este while se tiene que hacer como actores
     //o se pasan el valor del trablero entre los actores
