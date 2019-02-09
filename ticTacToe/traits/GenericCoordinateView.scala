@@ -2,6 +2,6 @@ package ticTacToe.traits
 
 import ticTacToe.models.Coordinate
 
-trait CoordinateViewGeneric {
+trait GenericCoordinateView {
   def read:Coordinate
 }
