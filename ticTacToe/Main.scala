@@ -1,7 +1,7 @@
 package ticTacToe
 
 import ticTacToe.models.Game
-import ticTacToe.views.{CoordinateView, GameView, GestorIO}
+import ticTacToe.views.{ManualCoordinateView, GameView, GestorIO}
 
 object Main {
 
@@ -20,9 +20,9 @@ object Main {
     //o hay un tercer actor que gestiona el tablero
     do {
       if (!game.isComplete){
-        game = game.put(CoordinateView.read)
+        game = game.put(ManualCoordinateView.read)
       } else {
-        game = game.move(CoordinateView.read, CoordinateView.read)
+        game = game.move(ManualCoordinateView.read, ManualCoordinateView.read)
       }
       GameView.write(game)
     } while (!game.isTicTacToe)

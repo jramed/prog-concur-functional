@@ -3,7 +3,7 @@ package ticTacToe.views
 import ticTacToe.models.Coordinate
 import ticTacToe.traits.GenericCoordinateView
 
-object CoordinateView extends GenericCoordinateView {
+object ManualCoordinateView extends GenericCoordinateView {
 
   def read:Coordinate = {
     val row = GestorIO.readInt("Fila? [1-3]")
