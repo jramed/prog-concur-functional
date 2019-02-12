@@ -99,7 +99,8 @@ class Board(rows: List[List[Int]] = List(
       }
 
       val coordinates = this.getCoordinates(player)
-      coordinates.length == 3 && equals(getDirections(coordinates))
+      val directions = getDirections(coordinates)
+      coordinates.length == 3 && equals(directions) && !directions.contains("")
     }
 
     isTicTacToe(0) || isTicTacToe(1)
