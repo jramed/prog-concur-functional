@@ -32,6 +32,10 @@ class Coordinate(row:Int, column:Int) {
       case _ => false
     }
 
+  override def toString: String = {
+    s"row ${row} column ${column}"
+  }
+
   def getRow = row_
 
   def getColumn = column_
