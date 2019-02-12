@@ -10,19 +10,23 @@ object Main {
   // se debe pedir si es demo, los dos jugadores son automaticos o son humanos
   //utilizar traits para hacerlo
   def main(args: Array[String]): Unit = {
+    def selectGameMode = {
       val gameMode = GameView.obtainGameMode()
-
-    var coordinateView: GenericCoordinateView = ManualCoordinateView
-    gameMode match {
-      case mode if mode == GameMode.Demo => {
-        println("demo mode selected")
-        coordinateView = DemoCoordinateView
+      var coordinateView: GenericCoordinateView = ManualCoordinateView
+      gameMode match {
+        case mode if mode == GameMode.Demo => {
+          println("demo mode selected")
+          coordinateView = DemoCoordinateView
+        }
+        case _ => {
+          println("manual mode selected")
+          coordinateView = ManualCoordinateView
+        }
       }
-      case _ => {
-        println("manual mode selected")
-        coordinateView = ManualCoordinateView
-      }
+      coordinateView
     }
+
+    var coordinateView: GenericCoordinateView = selectGameMode
 
     GameView.write(game)
     //este while se tiene que hacer como actores
