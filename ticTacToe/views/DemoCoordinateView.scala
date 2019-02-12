@@ -11,11 +11,13 @@ object DemoCoordinateView extends GenericCoordinateView{
   }
 
   private def getRow(): Int = {
-    1
+    //nanoTime() is more expensive than currentTimeMillis() depending on the architecture
+    val r = new scala.util.Random(System.nanoTime())
+    r.nextInt(3)+1
   }
 
   private def getColumn(): Int = {
-    1
+    getRow()
   }
 
 }
