@@ -14,11 +14,9 @@ object GameView {
     val mode = GestorIO.readInt("Game mode? [0 Demo, Any other value Manual]")
     mode match {
       case a if (a == 0) => {
-        println("Mode Demo selected")
         GameMode.Demo
       }
       case _ => {
-        println("Mode Manual selected")
         GameMode.Manual
       }
     }
