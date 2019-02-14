@@ -10,7 +10,7 @@ object Main {
   // se debe pedir si es demo, los dos jugadores son automaticos o son humanos
   //utilizar traits para hacerlo
   def main(args: Array[String]): Unit = {
-    var coordinateView: GenericCoordinateView = GameView.selectGameMode
+    val coordinateView: GenericCoordinateView = GameView.selectGameMode
 
     GameView.write(game)
     //este while se tiene que hacer como actores
