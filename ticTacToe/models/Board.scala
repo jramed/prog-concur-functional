@@ -123,7 +123,6 @@ class Board(rows: List[List[Int]] = List(
       val result = isTicTacToe(1)
       println(s"The result for player1 is $result")
       result
-      throw new InterruptedException
     }
 
     val result = for {
