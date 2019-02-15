@@ -6,14 +6,6 @@ import ticTacToe.views.{GameView, GestorIO}
 
 object Main {
 
-  def isTicTacToe = {
-    println("invoking main.isTicTacToe")
-    game.isTicTacToe.value match{
-      case None => false
-      case Some(a) => a.get
-    }
-
-  }
   var game = new Game
   // se debe pedir si es demo, los dos jugadores son automaticos o son humanos
   //utilizar traits para hacerlo
@@ -31,7 +23,7 @@ object Main {
         game = game.move(coordinateView.read, coordinateView.read)
       }
       GameView.write(game)
-    } while (!isTicTacToe)
+    } while (!game.isTicTacToe)
     GestorIO.write("... pero has perdido")
   }
 }
