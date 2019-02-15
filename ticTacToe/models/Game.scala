@@ -1,5 +1,7 @@
 package ticTacToe.models
 
+import scala.concurrent.Future
+
 class Game(turn: Turn = new Turn, board: Board = new Board()) {
 
   private val turn_ = turn
@@ -18,7 +20,7 @@ class Game(turn: Turn = new Turn, board: Board = new Board()) {
     new Game(newTurn, newBoard)
   }
 
-  def isTicTacToe: Boolean = board_.isTicTacToe
+  def isTicTacToe: Future[Boolean] = board_.isTicTacToe
 
   def isComplete: Boolean = board_.isComplete
 

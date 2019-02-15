@@ -1,5 +1,10 @@
 package ticTacToe.models
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+//import scala.concurrent.duration._
+import scala.util.{Success, Failure}
+
 class Board(rows: List[List[Int]] = List(
   List(-1, -1, -1),
   List(-1, -1, -1),
@@ -78,7 +83,7 @@ class Board(rows: List[List[Int]] = List(
 
   def isComplete: Boolean = this.getCoordinates(-1).length == 3
 
-  def isTicTacToe: Boolean = {
+  def isTicTacToe: Future[Boolean] = {
 
     def isTicTacToe(player: Int): Boolean = {
 
@@ -98,13 +103,43 @@ class Board(rows: List[List[Int]] = List(
         }
       }
 
+      println ("board.isTicTacToe(param)")
       val coordinates = this.getCoordinates(player)
       val directions = getDirections(coordinates)
       coordinates.length == 3 && equals(directions) && !directions.contains("")
     }
 
-    isTicTacToe(0) || isTicTacToe(1)
+    //isTicTacToe(0) || isTicTacToe(1)
     //Aqui es donde hay que meter Futures para hacerlo en paralelo
+
+    //implicit val baseTime = System.currentTimeMillis
+    println("board.isTicTacToe")
+    val ticTacToePlayer0 = Future {
+      val result = isTicTacToe(0)
+      println(s"The result for player0 is $result")
+      result
+    }
+    val ticTacToePlayer1 = Future {
+      val result = isTicTacToe(1)
+      println(s"The result for player1 is $result")
+      result
+      throw new InterruptedException
+    }
+
+    val result = for {
+      r1 <- ticTacToePlayer0
+      r2 <- ticTacToePlayer1
+    } yield (r1 || r2)
+    Thread.sleep(50)
+
+    result onComplete{
+      case Success(value) =>
+        println(s"este es el valor del future $value")
+      case Failure (e) =>
+        e.printStackTrace
+        throw e
+    }
+    result
   }
 
   override def equals(that: Any): Boolean =
