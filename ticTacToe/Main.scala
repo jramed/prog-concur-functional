@@ -5,13 +5,13 @@ import ticTacToe.models.Game
 import ticTacToe.traits.GenericCoordinateView
 import ticTacToe.views.{GameView, GestorIO}
 
-case class Play(game: Game, coordinateView: GenericCoordinateView)
+case class Play(game: Game)
 case class StopGame(game: Game)
 
 
-class PlayerActor0 extends Actor {
+class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
   def receive = {
-    case Play(game, coordinateView) => {
+    case Play(game) => {
       var newGame = game
       if (!game.isComplete){
         newGame = game.put(coordinateView.read)
@@ -20,7 +20,7 @@ class PlayerActor0 extends Actor {
       }
       GameView.write(newGame)
       if (game.isTicTacToe == false)
-        sender ! Play(newGame,coordinateView)
+        sender ! Play(newGame)
       else {
         sender ! StopGame(game)
         context.stop(self)
@@ -32,9 +32,9 @@ class PlayerActor0 extends Actor {
   }
 }
 
-class PlayerActor1(player: ActorRef) extends Actor {
+class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) extends Actor {
   def receive = {
-    case Play(game, coordinateView) => {
+    case Play(game) => {
       var newGame = game
       if (!game.isComplete){
         newGame = game.put(coordinateView.read)
@@ -44,7 +44,7 @@ class PlayerActor1(player: ActorRef) extends Actor {
       GameView.write(newGame)
 
       if (game.isTicTacToe == false)
-        player ! Play(newGame,coordinateView)
+        player ! Play(newGame)
       else {
         player ! StopGame(game)
         context.stop(self)
@@ -71,10 +71,10 @@ object Main {
 
     val system = ActorSystem("TicTacToe")
 
-    val playerActor0 = system.actorOf(Props[PlayerActor0], name = "player0")
-    val playerActor1 = system.actorOf(Props(new PlayerActor1(playerActor0)), name = "player1" )
+    val playerActor0 = system.actorOf(Props(new PlayerActor0(coordinateView)), name = "player0")
+    val playerActor1 = system.actorOf(Props(new PlayerActor1(playerActor0, coordinateView)), name = "player1" )
 
-    playerActor1 ! Play(game, coordinateView)
+    playerActor1 ! Play(game)
 
 /*    do {
       if (!game.isComplete){
