@@ -8,7 +8,7 @@ class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) exte
   def receive: PartialFunction[Any,Unit] = {
     case StartPlay(game)  => player ! NextMovement(playGame(game))
     case NextMovement(game) => playGameAndCheck(game)
-    case StopGame(game) => stopGame()
+    case StopGame() => stopGame()
     case _ => println("received non expected message in player1")
   }
 }

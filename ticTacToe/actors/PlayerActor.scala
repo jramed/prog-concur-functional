@@ -26,7 +26,7 @@ abstract class PlayerActor(coordinateView: GenericCoordinateView) extends Actor 
       sender ! NextMovement(newGame)
     }
     else {
-      sender ! StopGame(newGame)
+      sender ! StopGame()
       GestorIO.write("... pero has perdido\n")
       context.stop(self)
     }
