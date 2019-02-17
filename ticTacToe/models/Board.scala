@@ -123,7 +123,7 @@ class Board(rows: List[List[Int]] = List(
 
     r0 || r1
 
-      //This another option avoiding to use Await but it needs to access to the values in the Future and
+      //This other option avoiding to use Await but it needs to access to the values in the Future and
       //with an actual error handling that could be problematic
 //    val result = for {
 //      r1 <- ticTacToePlayer0
