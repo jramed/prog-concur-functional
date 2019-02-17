@@ -1,65 +1,10 @@
 package ticTacToe
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
+import ticTacToe.actors.{PlayerActor0, PlayerActor1}
 import ticTacToe.models.Game
 import ticTacToe.traits.GenericCoordinateView
-import ticTacToe.views.{GameView, GestorIO}
-
-case class StartPlay(game: Game)
-case class NextMovement(game: Game)
-case class StopGame(game: Game)
-
-abstract class PlayerActor(coordinateView: GenericCoordinateView) extends Actor {
-  protected def playGame(game: Game) = {
-    if (!game.isComplete) {
-      val newGame = game.put(coordinateView.read)
-      GameView.write(newGame)
-      newGame
-    } else {
-      val newGame = game.move(coordinateView.read, coordinateView.read)
-      GameView.write(newGame)
-      newGame
-    }
-  }
-
-  protected def playGameAndCheck(game: Game) = {
-    val newGame = playGame(game)
-
-    if (newGame.isTicTacToe == false) {
-      sender ! NextMovement(newGame)
-    }
-    else {
-      sender ! StopGame(newGame)
-      GestorIO.write("... pero has perdido\n")
-      context.stop(self)
-    }
-  }
-}
-
-class PlayerActor0(coordinateView: GenericCoordinateView) extends PlayerActor(coordinateView) {
-  def receive = {
-    case NextMovement(game) => playGameAndCheck(game)
-    case StopGame(game) => {
-      context.stop(self)
-      println("StopGame of player0")
-      context.system.terminate()
-    }
-    case _ => println("received non expected message in player0")
-  }
-}
-
-class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) extends PlayerActor(coordinateView) {
-  def receive = {
-    case StartPlay(game)  => player ! NextMovement(playGame(game))
-    case NextMovement(game) => playGameAndCheck(game)
-    case StopGame(game) => {
-      context.stop(self)
-      println("StopGame of player1")
-      context.system.terminate()
-    }
-    case _ => println("received non expected message in player1")
-  }
-}
+import ticTacToe.views.GameView
 
 object Main {
 
