@@ -5,13 +5,14 @@ import ticTacToe.models.Game
 import ticTacToe.traits.GenericCoordinateView
 import ticTacToe.views.{GameView, GestorIO}
 
-case class Play(game: Game)
+case class StartPlay(game: Game)
+case class NextMovement(game: Game)
 case class StopGame(game: Game)
 
 
 class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
   def receive = {
-    case Play(game) => {
+    case NextMovement(game) => {
       var newGame = game
       if (!game.isComplete){
         newGame = game.put(coordinateView.read)
@@ -19,22 +20,36 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
         newGame = game.move(coordinateView.read, coordinateView.read)
       }
       GameView.write(newGame)
-      if (game.isTicTacToe == false)
-        sender ! Play(newGame)
+      if (game.isTicTacToe == false) {
+        println("not finished yet player0")
+        sender ! NextMovement(newGame)
+        println("not finished yet player0_2")
+      }
       else {
         sender ! StopGame(game)
+        GestorIO.write("... pero has perdido")
         context.stop(self)
       }
     }
     case StopGame(game) =>
       context.stop(self)
-    case _ =>
+    case _ => println("received non expected message in player0")
   }
 }
 
 class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) extends Actor {
   def receive = {
-    case Play(game) => {
+    case StartPlay(game)  => {
+      var newGame = game
+      if (!game.isComplete) {
+        newGame = game.put(coordinateView.read)
+      } else {
+        newGame = game.move(coordinateView.read, coordinateView.read)
+      }
+      GameView.write(newGame)
+      player ! NextMovement(newGame)
+    }
+    case NextMovement(game) => {
       var newGame = game
       if (!game.isComplete){
         newGame = game.put(coordinateView.read)
@@ -43,16 +58,19 @@ class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) exte
       }
       GameView.write(newGame)
 
-      if (game.isTicTacToe == false)
-        player ! Play(newGame)
+      if (newGame.isTicTacToe == false) {
+        println("not finished yet player1")
+        sender ! NextMovement(newGame)
+      }
       else {
-        player ! StopGame(game)
+        sender ! StopGame(newGame)
+        GestorIO.write("... pero has perdido")
         context.stop(self)
       }
     }
     case StopGame(game) =>
       context.stop(self)
-    case _ =>
+    case _ => println("received non expected message in player1")
   }
 }
 
@@ -74,7 +92,7 @@ object Main {
     val playerActor0 = system.actorOf(Props(new PlayerActor0(coordinateView)), name = "player0")
     val playerActor1 = system.actorOf(Props(new PlayerActor1(playerActor0, coordinateView)), name = "player1" )
 
-    playerActor1 ! Play(game)
+    playerActor1 ! StartPlay(game)
 
 /*    do {
       if (!game.isComplete){
@@ -85,8 +103,6 @@ object Main {
       GameView.write(game)
     } while (!game.isTicTacToe)
     */
-    GestorIO.write("... pero has perdido")
-
-
+    //GestorIO.write("... pero has perdido")
   }
 }
