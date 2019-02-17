@@ -23,7 +23,6 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
       if (game.isTicTacToe == false) {
         println("not finished yet player0")
         sender ! NextMovement(newGame)
-        println("not finished yet player0_2")
       }
       else {
         sender ! StopGame(game)
@@ -38,10 +37,6 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
       context.system.terminate()
     }
     case _ => println("received non expected message in player0")
-  }
-
-  override def postStop: Unit = {
-    println("postStop for player0")
   }
 }
 
@@ -84,10 +79,6 @@ class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) exte
     }
     case _ => println("received non expected message in player1")
   }
-
-  override def postStop: Unit = {
-    println("postStop for player1")
-  }
 }
 
 object Main {
@@ -109,17 +100,5 @@ object Main {
     val playerActor1 = system.actorOf(Props(new PlayerActor1(playerActor0, coordinateView)), name = "player1" )
 
     playerActor1 ! StartPlay(game)
-
-/*    do {
-      if (!game.isComplete){
-        game = game.put(coordinateView.read)
-      } else {
-        game = game.move(coordinateView.read, coordinateView.read)
-      }
-      GameView.write(game)
-    } while (!game.isTicTacToe)
-    */
-    //GestorIO.write("... pero has perdido")
-    println("Going out of main")
   }
 }
