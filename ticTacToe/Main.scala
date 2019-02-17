@@ -14,7 +14,7 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
   def receive = {
     case NextMovement(game) => {
       var newGame = game
-      if (!game.isComplete){
+      if (!game.isComplete) {
         newGame = game.put(coordinateView.read)
       } else {
         newGame = game.move(coordinateView.read, coordinateView.read)
@@ -29,11 +29,19 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
         sender ! StopGame(game)
         GestorIO.write("... pero has perdido")
         context.stop(self)
+        println("StopGame of player0 from NextMovement")
       }
     }
-    case StopGame(game) =>
+    case StopGame(game) => {
       context.stop(self)
+      println("StopGame of player0")
+      context.system.terminate()
+    }
     case _ => println("received non expected message in player0")
+  }
+
+  override def postStop: Unit = {
+    println("postStop for player0")
   }
 }
 
@@ -64,13 +72,21 @@ class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) exte
       }
       else {
         sender ! StopGame(newGame)
-        GestorIO.write("... pero has perdido")
+        GestorIO.write("... pero has perdido\n")
         context.stop(self)
+        println("StopGame of player1 from NextMovement")
       }
     }
-    case StopGame(game) =>
+    case StopGame(game) => {
       context.stop(self)
+      println("StopGame of player1")
+      context.system.terminate()
+    }
     case _ => println("received non expected message in player1")
+  }
+
+  override def postStop: Unit = {
+    println("postStop for player1")
   }
 }
 
@@ -104,5 +120,6 @@ object Main {
     } while (!game.isTicTacToe)
     */
     //GestorIO.write("... pero has perdido")
+    println("Going out of main")
   }
 }
