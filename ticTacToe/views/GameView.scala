@@ -9,19 +9,16 @@ object GameMode extends Enumeration {
 }
 
 object GameView {
-
-  private def askForGameMode() = {
-
-    val mode = GestorIO.readInt("Game mode? [0 Demo, Any other value for Manual]")
-    mode match {
-      case a if (a == 0) => GameMode.Demo
-      case _ => GameMode.Manual
-    }
-  }
-
   def selectGameMode = {
-    val gameMode = GameView.askForGameMode()
-    gameMode match {
+    def askForGameMode() = {
+      val mode = GestorIO.readInt("Game mode? [0 Demo, Any other value for Manual]")
+      mode match {
+        case a if (a == 0) => GameMode.Demo
+        case _ => GameMode.Manual
+      }
+    }
+
+    askForGameMode() match {
       case mode if mode == GameMode.Demo => DemoCoordinateView
       case _ => ManualCoordinateView
     }
