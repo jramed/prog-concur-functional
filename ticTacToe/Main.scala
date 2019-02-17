@@ -9,28 +9,36 @@ case class StartPlay(game: Game)
 case class NextMovement(game: Game)
 case class StopGame(game: Game)
 
-
-class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
-  def receive = {
-    case NextMovement(game) => {
-      var newGame = game
-      if (!game.isComplete) {
-        newGame = game.put(coordinateView.read)
-      } else {
-        newGame = game.move(coordinateView.read, coordinateView.read)
-      }
+abstract class PlayerActor(coordinateView: GenericCoordinateView) extends Actor {
+  protected def playGame(game: Game) = {
+    if (!game.isComplete) {
+      val newGame = game.put(coordinateView.read)
       GameView.write(newGame)
-      if (game.isTicTacToe == false) {
-        println("not finished yet player0")
-        sender ! NextMovement(newGame)
-      }
-      else {
-        sender ! StopGame(game)
-        GestorIO.write("... pero has perdido")
-        context.stop(self)
-        println("StopGame of player0 from NextMovement")
-      }
+      newGame
+    } else {
+      val newGame = game.move(coordinateView.read, coordinateView.read)
+      GameView.write(newGame)
+      newGame
     }
+  }
+
+  protected def playGameAndCheck(game: Game) = {
+    val newGame = playGame(game)
+
+    if (newGame.isTicTacToe == false) {
+      sender ! NextMovement(newGame)
+    }
+    else {
+      sender ! StopGame(newGame)
+      GestorIO.write("... pero has perdido\n")
+      context.stop(self)
+    }
+  }
+}
+
+class PlayerActor0(coordinateView: GenericCoordinateView) extends PlayerActor(coordinateView) {
+  def receive = {
+    case NextMovement(game) => playGameAndCheck(game)
     case StopGame(game) => {
       context.stop(self)
       println("StopGame of player0")
@@ -40,38 +48,10 @@ class PlayerActor0(coordinateView: GenericCoordinateView) extends Actor {
   }
 }
 
-class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) extends Actor {
+class PlayerActor1(player: ActorRef, coordinateView: GenericCoordinateView) extends PlayerActor(coordinateView) {
   def receive = {
-    case StartPlay(game)  => {
-      var newGame = game
-      if (!game.isComplete) {
-        newGame = game.put(coordinateView.read)
-      } else {
-        newGame = game.move(coordinateView.read, coordinateView.read)
-      }
-      GameView.write(newGame)
-      player ! NextMovement(newGame)
-    }
-    case NextMovement(game) => {
-      var newGame = game
-      if (!game.isComplete){
-        newGame = game.put(coordinateView.read)
-      } else {
-        newGame = game.move(coordinateView.read, coordinateView.read)
-      }
-      GameView.write(newGame)
-
-      if (newGame.isTicTacToe == false) {
-        println("not finished yet player1")
-        sender ! NextMovement(newGame)
-      }
-      else {
-        sender ! StopGame(newGame)
-        GestorIO.write("... pero has perdido\n")
-        context.stop(self)
-        println("StopGame of player1 from NextMovement")
-      }
-    }
+    case StartPlay(game)  => player ! NextMovement(playGame(game))
+    case NextMovement(game) => playGameAndCheck(game)
     case StopGame(game) => {
       context.stop(self)
       println("StopGame of player1")
