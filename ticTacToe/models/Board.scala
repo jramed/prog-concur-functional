@@ -108,7 +108,7 @@ class Board(rows: List[List[Int]] = List(
     }
 
     //isTicTacToe(0) || isTicTacToe(1)
-    //Aqui es donde hay que meter Futures para hacerlo en paralelo
+    //Change #2: Check in parallel if there is ticTacToe after last movement
 
     val ticTacToePlayer0 = Future {
       isTicTacToe(0)
@@ -123,13 +123,14 @@ class Board(rows: List[List[Int]] = List(
 
     r0 || r1
 
-    //This another option avoiding to use Await
+      //This another option avoiding to use Await but it needs to access to the values in the Future and
+      //with an actual error handling that could be problematic
 //    val result = for {
 //      r1 <- ticTacToePlayer0
 //      r2 <- ticTacToePlayer1
 //    } yield (r1 || r2)
 
-    //It is needed to wait for the future being fulfilled
+    //It is needed to wait for the future being fulfilled and the value be accessible
 //    Thread.sleep(50)
 
 //    result.value match{
