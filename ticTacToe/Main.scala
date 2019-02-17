@@ -7,18 +7,16 @@ import ticTacToe.traits.GenericCoordinateView
 import ticTacToe.views.GameView
 
 object Main {
+  // var is not needed anymore
+  val game = new Game
 
-  var game = new Game
-  // se debe pedir si es demo, los dos jugadores son automaticos o son humanos
-  //utilizar traits para hacerlo
   def main(args: Array[String]): Unit = {
+    //Change #1: Ask for Manual or Demo mode
     val coordinateView: GenericCoordinateView = GameView.selectGameMode
 
     GameView.write(game)
-    //este while se tiene que hacer como actores
-    //o se pasan el valor del trablero entre los actores
-    //o hay un tercer actor que gestiona el tablero
 
+    //Change #3: Use actors to play the game. The while loop has been removed
     val system = ActorSystem("TicTacToe")
 
     val playerActor0 = system.actorOf(Props(new PlayerActor0(coordinateView)), name = "player0")
